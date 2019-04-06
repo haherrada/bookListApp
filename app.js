@@ -23,6 +23,33 @@ UI.prototype.addBookToList = function(book){
   list.appendChild(row);
 }
 
+// Show Alert
+UI.prototype.showAlert = function (message, className) {
+  // Create div
+  const div = document.createElement('div');
+  // Add classes
+  div.className = `alert ${className}`;
+  // Add text
+  div.appendChild(document.createTextNode(message));
+  //Get parent
+  const container = document.querySelector('.container');
+  const form = document.querySelector('#book-form');
+  // Insert Alert
+  container.insertBefore(div, form);
+
+  // Timeout after 3 sec
+  setTimeout(function(){
+    document.querySelector('.alert').remove();
+  }, 3000);
+}
+
+// Delete Book
+UI.prototype.deleteBook = function(target) {
+  if(target.className === 'delete'){
+    target.parentElement.parentElement.remove();
+  }
+}
+
 // Clear Fields
 
 UI.prototype.clearFields = function () {
@@ -32,7 +59,7 @@ UI.prototype.clearFields = function () {
 }
 
 
-//Event Listeners 
+//Event Listener for add book
 document.querySelector('#book-form').addEventListener('submit', function(e){
   //Get form values
   const title = document.querySelector('#title').value,
@@ -46,6 +73,21 @@ document.querySelector('#book-form').addEventListener('submit', function(e){
   // Instatitate UI
   const ui = new UI();
 
+  // Validate 
+  if(title === '' || author === '' || isbn === '') {
+    // Error alert
+    ui.showAlert('Please fill in all fields', 'error');
+  } else {
+    // Add book to list
+  ui.addBookToList(book);
+
+  // Show sucesss
+  ui.showAlert('Book Added!', 'sucess');
+
+  // Clear Fields
+  ui.clearFields();
+  }
+
   // Add book to list
   ui.addBookToList(book);
 
@@ -54,3 +96,18 @@ document.querySelector('#book-form').addEventListener('submit', function(e){
 
   e.preventDefault();
 });
+
+// Event Listener for delete
+document.querySelector('#book-list').addEventListener('click', function(e){
+  
+  // Instatitate UI
+  const ui = new UI();
+
+  ui.deleteBook(e.target);
+
+  // Show message
+  ui.showAlert('Book Removed!', 'success');
+
+  e.preventDefault();
+})
+
